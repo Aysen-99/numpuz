@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Document</title>
+        <style>
+            #cedvel { border-collapse: collapse ; margin: 10vh auto;}
+            td { border: 1px solid #333; width: 20vh; height: 20vh; font: 3em Arial; color: #999; text-align: center }
+            #time {font: 2em Arial; color: #ff3300 }
+        </style>
+    </head>
+    <body>
+        <p id="time"></p>
+        <table id="cedvel"></table>
+
+        <script>
+            const cedvel = document.getElementById('cedvel')
+
+            let kod = ''
+            let arr = ['']
+            let bos = []
+            let time = document.getElementById('time')
+            let timer = setInterval (timing, 1000)
+            let minute = 0
+            let second = 0
+
+            function timing(){
+                if (second === 60) {
+                    second = 0
+                    minute++
+                }     
+                time.innerHTML = (minute < 10 ? `0${minute}` : minute) + ':' + (second < 10 ? `0${second}` : second)  
+                second++
+                
+            }
+
+            for (let i = 1; i <= 15; i++ ) { arr.push(i) }
+
+            for(let i = 1; i <= 4; i++ ) {
+                kod += "<tr>"
+                for(let j = 1; j <= 4; j++ ) {
+                    let x = rand(0, arr.length - 1)
+                    if(arr[x] == '') bos = [i, j]
+                    kod += `<td id="c${i}${j}" onclick="go(${i}, ${j})">${arr[x]}</td>`
+                    arr.splice(x, 1)
+                }
+                kod += "</tr>"
+            }
+            cedvel.innerHTML = kod
+
+            function go(i, j) {
+                let bosx = document.getElementById(`c${bos[0]}${bos[1]}`)
+                let carix = document.getElementById(`c${i}${j}`)
+                if ( i == bos[0] && Math.abs(j - bos[1]) == 1 ||
+                     j == bos[1] && Math.abs(i - bos[0]) == 1) {
+                        bosx.innerHTML = carix.innerHTML
+                        carix.innerHTML = ''
+                        bos = [i, j]
+                }    
+                yoxla()
+
+            }
+
+            function yoxla() {
+                let td = document.getElementsByTagName('td')
+                let win = 0
+                for (let i = 0; i <= 14; i++) {
+                    if (td[i].innerHTML == i+1){
+                        win++
+                    } else return
+                }
+                gameOver(win)
+            }
+
+            function gameOver(win) {   
+                if (win == 15){
+                    clearInterval(timer)  
+                    let td = cedvel.getElementsByTagName ("td")
+                    let txt = "GAMEOVER"
+                    for(let i = 4; i <= 11; i++ ) {
+                        td[i].style.cssText = "background: #000; color: #ffff00"
+                        td[i].innerHTML = txt[i-4]
+                    }
+                }
+            }
+            
+
+            function rand(min, max) {
+                return Math.floor(Math.random() * (max - min + 1) ) + min;
+            }
+        </script>
+    </body>
+</html>
